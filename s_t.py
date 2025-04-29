@@ -1,6 +1,7 @@
 import os
 import time
-glob
+import glob
+import base64
 
 import streamlit as st
 from streamlit_bokeh_events import streamlit_bokeh_events
@@ -9,13 +10,16 @@ from PIL import Image
 from googletrans import Translator
 from gtts import gTTS
 
-# Página y tema
-st.set_page_config(page_title="🎤 Traductor Creativo", page_icon="🌐", layout="wide")
+# Configurar página y tema
+st.set_page_config(
+    page_title="🎤 Traductor Creativo", 
+    page_icon="🌐", 
+    layout="wide"
+)
 
 # Estilos personalizados
 st.markdown("""
 <style>
-  /* Animación de fondo */
   @keyframes pulse {
     0% { background-color: #1a1a2e; }
     50% { background-color: #16213e; }
@@ -28,7 +32,7 @@ st.markdown("""
     background: rgba(255,255,255,0.05);
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
-  h1 { text-align: center; animation: fadeIn 1.5s ease; }
+  h1 { text-align: center; }
   .stButton > button {
     background: linear-gradient(90deg, #ff8c00, #e52e71);
     color: white;
@@ -42,7 +46,6 @@ st.markdown("""
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
-  /* Expander style */
   .streamlit-expanderHeader {
     font-weight: bold;
     font-size: 1.1rem;
@@ -51,19 +54,21 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Título con emoji animado
+# Título y portada
 st.title("🌐 Traductor Interactivo y Divertido")
-
-# Imagen de portada
 st.image(Image.open('OIG7.jpg'), width=250)
 
 # Sidebar con instrucciones
 with st.sidebar:
     st.header("Cómo usar")
-    st.write("1. Presiona el botón para grabar.\n2. Habla tu frase.\n3. Elige idiomas.\n4. Descarga tu audio.")
-    st.write("¡Diviértete viendo las animaciones al traducir!")
+    st.write(
+        "1. Pulsa el botón para grabar tu voz.\n"
+        "2. Habla la frase a traducir.\n"
+        "3. Elige idiomas de origen y destino.\n"
+        "4. Descarga el audio traducido."
+    )
 
-# Botón de voz
+# Botón de grabación de voz
 st.markdown("**Habla aquí 🎤:**")
 stt_button = Button(label="Iniciar Grabación", width=250, height=50)
 stt_button.js_on_event(
@@ -80,6 +85,8 @@ stt_button.js_on_event(
         recognition.start();
     """)
 )
+
+# Capturar evento de voz
 result = streamlit_bokeh_events(
     stt_button,
     events="GET_TEXT",
@@ -88,23 +95,23 @@ result = streamlit_bokeh_events(
     debounce_time=0
 )
 
-# Mostrar texto reconocido
+# Si hay texto reconocido, procedemos
 if result and 'GET_TEXT' in result:
     recognized = result['GET_TEXT']
     st.success(f"📝 Has dicho: {recognized}")
 
-    # Selección de idiomas con emojis
+    # Opciones de idiomas con emojis
     LANGS = {
         '🇪🇸 Español': 'es', '🇬🇧 Inglés': 'en', '🇨🇳 Mandarín': 'zh-cn',
         '🇰🇷 Coreano': 'ko', '🇯🇵 Japonés': 'ja', '🇧🇩 Bengalí': 'bn'
     }
-    in_lang = st.selectbox('🔄 Lenguaje de origen', list(LANGS.keys()), index=0)
-    out_lang = st.selectbox('🔁 Lenguaje de destino', list(LANGS.keys()), index=1)
+    in_lang = st.selectbox('🔄 Idioma origen', list(LANGS.keys()), index=0)
+    out_lang = st.selectbox('🔁 Idioma destino', list(LANGS.keys()), index=1)
 
-    translator = Translator()
     # Botón para traducir y generar audio
     if st.button('🔄 Traducir y generar audio'):
         with st.spinner('Traduciendo y creando audio...'):
+            translator = Translator()
             translated = translator.translate(recognized, src=LANGS[in_lang], dest=LANGS[out_lang]).text
             tts = gTTS(translated, lang=LANGS[out_lang], slow=False)
             os.makedirs('temp', exist_ok=True)
@@ -113,12 +120,17 @@ if result and 'GET_TEXT' in result:
             tts.save(path)
         st.balloons()
 
-        # Mostrar texto traducido en expander
+        # Mostrar traducción
         with st.expander('Ver texto traducido'):
             st.write(translated)
-        # Enlace de descarga creativo
+
+        # Enlace de descarga
         b64 = base64.b64encode(open(path, 'rb').read()).decode()
-        dl_link = f"<a href='data:audio/mp3;base64,{b64}' download='{fname}' style='color:#e52e71; font-weight:bold;'>🎧 Descargar tu audio</a>"
+        dl_link = (
+            f"<a href='data:audio/mp3;base64,{b64}' "
+            f"download='{fname}' style='color:#e52e71; font-weight:bold;'>"
+            "🎧 Descargar tu audio traducido</a>"
+        )
         st.markdown(dl_link, unsafe_allow_html=True)
 
 # Limpieza de archivos antiguos
