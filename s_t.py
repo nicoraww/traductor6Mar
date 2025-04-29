@@ -76,38 +76,33 @@ st.markdown("**Habla aquí 🎤:**")
 col1, col2 = st.columns(2, gap="large")
 with col1:
     start_btn = Button(label="Iniciar Grabación", width=200, height=50)
-    start_btn.js_on_event(
-        'button_click',
-        CustomJS(code="""
-            window.recognition = new webkitSpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = false;
-            recognition.lang = 'es-ES';
-            recognition.onresult = e => {
-                const text = e.results[0][0].transcript;
-                document.dispatchEvent(new CustomEvent('GET_TEXT', {detail: text}));
-            };
-            recognition.start();
-        """)
-    )
+    start_btn.js_on_event('button_click', CustomJS(code="""
+        window.recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = 'es-ES';
+        recognition.onresult = e => {
+            const text = e.results[0][0].transcript;
+            document.dispatchEvent(new CustomEvent('GET_TEXT', {detail: text}));
+        };
+        recognition.start();
+    """))
 with col2:
     stop_btn = Button(label="Detener Grabación", width=200, height=50)
-    stop_btn.js_on_event(
-        'button_click',
-        CustomJS(code="""
-            if (window.recognition) recognition.stop();
-        """)
-    )
+    stop_btn.js_on_event('button_click', CustomJS(code="""
+        if (window.recognition) recognition.stop();
+    """))
 
-# Captura el texto reconocido
+# Capturar evento de voz (Iniciar o Detener)
 event = streamlit_bokeh_events(
-    start_btn,
+    [start_btn, stop_btn],                 # Escucha ambos botones
     events='GET_TEXT',
     key='voice',
     override_height=60,
     debounce_time=0
 )
 
+# Procesar texto reconocido
 if event and 'GET_TEXT' in event:
     spoken = event['GET_TEXT']
     st.success(f"📝 Has dicho: {spoken}")
@@ -124,8 +119,9 @@ if event and 'GET_TEXT' in event:
     in_lang = st.selectbox('🔄 Idioma origen', list(LANGS.keys()), index=0)
     out_lang = st.selectbox('🔁 Idioma destino', list(LANGS.keys()), index=1)
 
+    # Traducir y generar audio
     if st.button('🔄 Traducir y Generar Audio'):
-        with st.spinner('Traduciendo...'):  
+        with st.spinner('Traduciendo...'):
             translator = Translator()
             translated = translator.translate(spoken, src=LANGS[in_lang], dest=LANGS[out_lang]).text
         with st.spinner('Creando Audio...'):
@@ -136,13 +132,17 @@ if event and 'GET_TEXT' in event:
             tts.save(path)
         st.balloons()
 
-        # Mostrar texto traducido en expander
+        # Mostrar texto traducido
         with st.expander('Ver Texto Traducido'):
             st.write(translated)
 
         # Enlace de descarga creativo
         b64 = base64.b64encode(open(path, 'rb').read()).decode()
-        link = f"<a href='data:audio/mp3;base64,{b64}' download='{fname}' style='font-size:1.2rem; color:#e52e71; font-weight:bold;'>🎧 Descargar Audio Traducido</a>"
+        link = (
+            f"<a href='data:audio/mp3;base64,{b64}' "
+            f"download='{fname}' style='font-size:1.2rem; color:#e52e71; font-weight:bold;'>"
+            "🎧 Descargar Audio Traducido</a>"
+        )
         st.markdown(link, unsafe_allow_html=True)
 
 # Limpieza de archivos antiguos
