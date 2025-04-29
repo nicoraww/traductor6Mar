@@ -17,15 +17,29 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos simples para contenedor, imagen y texto en negro
+# Estilos para texto en negro en toda la app
 st.markdown("""
 <style>
-  .block-container { padding: 2rem 3rem; border-radius: 12px; background-color: #f0f8ff; color: #000000; }
-  body, .block-container, .stMarkdown, h1, h2, h3, h4, h5, h6 { color: #000000 !important; }
-  img { border-radius: 1rem; }
-  .stButton > button { font-size: 1rem; padding: 0.6rem 1.2rem; color: #000000 !important; }
-  a { color: #000000 !important; }
-  .language-selectbox label { font-weight: bold; color: #000000 !important; }
+  /* Aplicar color negro a la mayor parte de texto */
+  * {
+    color: #000000 !important;
+  }
+  /* Cuerpo y contenedor */
+  .block-container {
+    padding: 2rem 3rem;
+    border-radius: 12px;
+    background-color: #f0f8ff;
+  }
+  /* Botones y enlaces */
+  .stButton > button {
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    color: #000000 !important;
+    border: 1px solid #000000;
+  }
+  a {
+    color: #000000 !important;
+  }
 </style>
 """, unsafe_allow_html=True)
 
@@ -36,7 +50,7 @@ st.title("🎤 Traductor de Voz y Texto")
 if os.path.exists('translator_banner.png'):
     st.image(Image.open('translator_banner.png'), use_column_width=True)
 
-# Selección de idiomas ANTES de grabar
+# Selección de idiomas antes de grabar
 st.markdown("### 🌐 Configuración de Idiomas")
 LANG_OPTIONS = {
     '🇪🇸 Español': 'es',
