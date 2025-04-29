@@ -101,19 +101,18 @@ with col2:
         """),
     )
 
-# Capturar evento de voz tras detener o resultado
-elements = [start_btn, stop_btn]
-result = streamlit_bokeh_events(
-    elements,
+# Capturar evento de voz al pulsar Iniciar Grabación
+tt_event = streamlit_bokeh_events(
+    start_btn,
     events="GET_TEXT",
     key="voice",
     override_height=60,
     debounce_time=0
 )
 
-# Si hay texto reconocido, procedemos
-if result and 'GET_TEXT' in result:
-    recognized = result['GET_TEXT']
+# Procesar texto reconocido
+if tt_event and 'GET_TEXT' in tt_event:
+    recognized = tt_event['GET_TEXT']
     st.success(f"📝 Has dicho: {recognized}")
 
     # Opciones de idiomas con emojis
