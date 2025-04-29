@@ -78,9 +78,15 @@ stt_button.js_on_event(
         recognition.continuous = false;
         recognition.interimResults = false;
         recognition.lang = 'es-ES';
-        recognition.onresult = e => {
+        
+        recognition.onresult = function(e) {
             const text = e.results[0][0].transcript;
             document.dispatchEvent(new CustomEvent('GET_TEXT', {detail: text}));
+            recognition.stop();  // Detener reconocimiento tras obtener resultado
+        };
+        recognition.onerror = function(err) {
+            console.error('Speech recognition error', err);
+            recognition.stop();
         };
         recognition.start();
     """)
