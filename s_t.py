@@ -62,39 +62,49 @@ st.image(Image.open('OIG7.jpg'), width=250)
 with st.sidebar:
     st.header("Cómo usar")
     st.write(
-        "1. Pulsa el botón para grabar tu voz.\n"
+        "1. Pulsa Iniciar Grabación para capturar tu voz.\n"
         "2. Habla la frase a traducir.\n"
-        "3. Elige idiomas de origen y destino.\n"
-        "4. Descarga el audio traducido."
+        "3. Pulsa Detener Grabación para procesar el texto.\n"
+        "4. Elige idiomas y descarga el audio traducido."
     )
 
-# Botón de grabación de voz
+# Botones de grabación de voz (Iniciar y Detener)
 st.markdown("**Habla aquí 🎤:**")
-stt_button = Button(label="Iniciar Grabación", width=250, height=50)
-stt_button.js_on_event(
-    "button_click",
-    CustomJS(code="""
-        const recognition = new webkitSpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'es-ES';
-        
-        recognition.onresult = function(e) {
-            const text = e.results[0][0].transcript;
-            document.dispatchEvent(new CustomEvent('GET_TEXT', {detail: text}));
-            recognition.stop();  // Detener reconocimiento tras obtener resultado
-        };
-        recognition.onerror = function(err) {
-            console.error('Speech recognition error', err);
-            recognition.stop();
-        };
-        recognition.start();
-    """)
-)
+col1, col2 = st.columns([1,1], gap="large")
+with col1:
+    start_btn = Button(label="Iniciar Grabación", width=250, height=50)
+    start_btn.js_on_event(
+        "button_click",
+        CustomJS(code="""
+            window.recognition = new webkitSpeechRecognition();
+            window.recognition.continuous = false;
+            window.recognition.interimResults = false;
+            window.recognition.lang = 'es-ES';
+            window.recognition.onresult = function(e) {
+                const text = e.results[0][0].transcript;
+                document.dispatchEvent(new CustomEvent('GET_TEXT', {detail: text}));
+            };
+            window.recognition.onerror = function(err) {
+                console.error('Speech recognition error', err);
+            };
+            window.recognition.start();
+        """),
+    )
+with col2:
+    stop_btn = Button(label="Detener Grabación", width=250, height=50)
+    stop_btn.js_on_event(
+        "button_click",
+        CustomJS(code="""
+            if (window.recognition) {
+                window.recognition.stop();
+            }
+        """),
+    )
 
-# Capturar evento de voz
+# Capturar evento de voz tras detener o resultado
+elements = [start_btn, stop_btn]
 result = streamlit_bokeh_events(
-    stt_button,
+    elements,
     events="GET_TEXT",
     key="voice",
     override_height=60,
