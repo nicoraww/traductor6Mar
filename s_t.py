@@ -17,13 +17,15 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos simples para contenedor e imagen
+# Estilos simples para contenedor, imagen y texto en negro
 st.markdown("""
 <style>
-  .block-container { padding: 2rem 3rem; border-radius: 12px; background-color: #f0f8ff; }
+  .block-container { padding: 2rem 3rem; border-radius: 12px; background-color: #f0f8ff; color: #000000; }
+  body, .block-container, .stMarkdown, h1, h2, h3, h4, h5, h6 { color: #000000 !important; }
   img { border-radius: 1rem; }
-  .stButton > button { font-size: 1rem; padding: 0.6rem 1.2rem; }
-  .language-selectbox label { font-weight: bold; }
+  .stButton > button { font-size: 1rem; padding: 0.6rem 1.2rem; color: #000000 !important; }
+  a { color: #000000 !important; }
+  .language-selectbox label { font-weight: bold; color: #000000 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -104,7 +106,7 @@ if voice_event and 'GET_TEXT' in voice_event:
         b64 = base64.b64encode(audio_bytes).decode()
         download_link = (
             f"<a href='data:audio/mp3;base64,{b64}' download='{filename}'"
-            " style='font-size:1.1rem; color:#0066cc;'>🎧 Descargar Audio</a>"
+            " style='font-size:1.1rem;'>🎧 Descargar Audio</a>"
         )
         st.markdown(download_link, unsafe_allow_html=True)
         # Mostrar traducción
@@ -116,4 +118,6 @@ def cleanup(days=7):
     cutoff = time.time() - days * 86400
     for f in glob.glob('temp/*.mp3'):
         if os.stat(f).st_mtime < cutoff:
-            os.remove
+            os.remove(f)
+
+cleanup()
