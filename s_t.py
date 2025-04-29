@@ -69,14 +69,13 @@ with col1:
         recognition.start();
     """))
 with col2:
-    stop_btn = Button(label="Detener 🛑", width=200, height=50)
-    stop_btn.js_on_event('button_click', CustomJS(code="""
+    Button(label="Detener 🛑", width=200, height=50).js_on_event('button_click', CustomJS(code="""
         if (window.recognition) window.recognition.stop();
     """))
 
-# Capturar evento de voz desde ambos botones
+# Capturar evento de voz (solo rec_btn)
 voice_event = streamlit_bokeh_events(
-    [rec_btn, stop_btn],
+    rec_btn,
     events='GET_TEXT',
     key='voice_event',
     override_height=75,
