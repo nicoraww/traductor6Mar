@@ -13,9 +13,19 @@ st.markdown("""
 <style>
   body { background-color: #ffffff; color: #000000; }
   .block-container { background: #ffffff; border-radius: 8px; padding: 2rem; max-width: 600px; margin: auto; }
-  .stButton > button { background: none; border: 2px solid #000; border-radius: 4px; padding: 0.5rem 1rem; font-size: 1rem; }
-  .stButton > button:hover { background: #000000; }
-  h1, h2, h3, label, .stMarkDown { color: #000000 !important; }
+  /* Botones en negro con texto blanco */
+  .stButton > button {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+  .stButton > button:hover {
+    background-color: #333333 !important;
+  }
+  h1, h2, h3, label, .stMarkdown { color: #000000 !important; }
   .stSelectbox > div > div > div { color: #000000; }
   @keyframes floatEmoji { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
   .emoji-flag { display: inline-block; animation: floatEmoji 3s ease-in-out infinite; font-size: 2rem; margin: 0 0.25rem; }
