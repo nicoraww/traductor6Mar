@@ -12,7 +12,7 @@ from googletrans import Translator
 st.markdown("""
 <style>
   body { background-color: #ffffff; color: #000000; }
-  .block-container { background: #000000; border-radius: 8px; padding: 2rem; max-width: 600px; margin: auto; }
+  .block-container { background: #ffffff; border-radius: 8px; padding: 2rem; max-width: 600px; margin: auto; }
   .stButton > button { background: none; border: 2px solid #000; border-radius: 4px; padding: 0.5rem 1rem; font-size: 1rem; }
   .stButton > button:hover { background: #e0e0e0; }
   h1, h2, h3, label { color: #000000; }
@@ -60,12 +60,23 @@ if result and 'GET_TEXT' in result:
     text = result['GET_TEXT']
     st.write(f"**Texto reconocido:** {text}")
 
-    # Selección de idiomas con emojis
-    LANGS = {'🇪🇸 Español':'es','🇬🇧 English':'en','🇨🇳 中文':'zh-cn','🇰🇷 한국어':'ko','🇯🇵 日本語':'ja','🇧🇩 বাংলা':'bn'}
-    in_lang = st.selectbox('🔄 Origen', list(LANGS.keys()), index=0)
-    out_lang = st.selectbox('🔁 Destino', list(LANGS.keys()), index=1)
+    # Selección de idiomas con emojis animadas
+tmp_langs = {'🇪🇸 Español':'es','🇬🇧 English':'en','🇨🇳 中文':'zh-cn','🇰🇷 한국어':'ko','🇯🇵 日本語':'ja','🇧🇩 বাংলা':'bn'}
+col1, col2 = st.columns(2, gap='large')
+with col1:
+    origin_sel = st.selectbox('🔄 Origen', list(tmp_langs.keys()), index=0)
+    # Bandera animada para origen
+    st.markdown(f"<span class='emoji-flag'>{origin_sel.split()[0]}</span>", unsafe_allow_html=True)
+with col2:
+    dest_sel = st.selectbox('🔁 Destino', list(tmp_langs.keys()), index=1)
+    # Bandera animada para destino
+    st.markdown(f"<span class='emoji-flag'>{dest_sel.split()[0]}</span>", unsafe_allow_html=True)
 
-    # Conversión a audio
+# Mapear a códigos de idioma
+in_lang = tmp_langs[origin_sel]
+out_lang = tmp_langs[dest_sel]
+
+# Conversión a audio
     if st.button('🔄 Convertir y descargar'):
         tts = gTTS(
             translator.translate(text, src=LANGS[in_lang], dest=LANGS[out_lang]).text,
