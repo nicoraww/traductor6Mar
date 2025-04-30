@@ -88,10 +88,5 @@ def cleanup(days=7):
         if os.stat(f).st_mtime < cutoff:
             os.remove(f)
 
-cleanup()(days=7):
-    cutoff = time.time() - days*86400
-    for f in glob.glob('temp/*.mp3'):
-        if os.stat(f).st_mtime < cutoff:
-            os.remove(f)
-
+# Ejecutar limpieza
 cleanup()
