@@ -14,7 +14,7 @@ st.markdown("""
   body { background-color: #ffffff; color: #000000; }
   .block-container { background: #ffffff; border-radius: 8px; padding: 2rem; max-width: 600px; margin: auto; }
   .stButton > button { background: none; border: 2px solid #000; border-radius: 4px; padding: 0.5rem 1rem; font-size: 1rem; }
-  .stButton > button:hover { background: #e0e0e0; }
+  .stButton > button:hover { background: #000000; }
   h1, h2, h3, label, .stMarkDown { color: #000000 !important; }
   .stSelectbox > div > div > div { color: #000000; }
   @keyframes floatEmoji { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
