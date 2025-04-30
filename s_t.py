@@ -12,7 +12,7 @@ from googletrans import Translator
 st.markdown("""
 <style>
   body { background-color: #ffffff; color: #000000; }
-  .block-container { background: #000000; border-radius: 8px; padding: 2rem; max-width: 600px; margin: auto; }
+  .block-container { background: #ffffff; border-radius: 8px; padding: 2rem; max-width: 600px; margin: auto; }
   .stButton > button { background: none; border: 2px solid #000; border-radius: 4px; padding: 0.5rem 1rem; font-size: 1rem; }
   .stButton > button:hover { background: #e0e0e0; }
   h1, h2, h3, label, .stMarkDown { color: #000000 !important; }
