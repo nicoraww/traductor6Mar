@@ -11,7 +11,7 @@ from googletrans import Translator
 # Estilos minimalistas
 st.markdown("""
 <style>
-  body { background-color: #f5f5f5; color: #000000; }
+  body { background-color: #ffffff; color: #000000; }
   .block-container { background: #ffffff; border-radius: 8px; padding: 2rem; max-width: 600px; margin: auto; }
   .stButton > button { background: none; border: 2px solid #000; border-radius: 4px; padding: 0.5rem 1rem; font-size: 1rem; }
   .stButton > button:hover { background: #e0e0e0; }
@@ -83,6 +83,12 @@ if result and 'GET_TEXT' in result:
 
 # Limpieza de archivos antiguos
 def cleanup(days=7):
+    cutoff = time.time() - days*86400
+    for f in glob.glob('temp/*.mp3'):
+        if os.stat(f).st_mtime < cutoff:
+            os.remove(f)
+
+cleanup()(days=7):
     cutoff = time.time() - days*86400
     for f in glob.glob('temp/*.mp3'):
         if os.stat(f).st_mtime < cutoff:
